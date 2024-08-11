@@ -327,52 +327,71 @@ document.addEventListener('DOMContentLoaded', () => {
     renderPagination();
 });
 
-/* Do osbsługi filtrów felg */
+/* Osbługa Felg -> filtry */
 
+document.addEventListener('DOMContentLoaded', function() {
+    function toggleSection(element) {
+        const content = element.nextElementSibling;
+        const isActive = element.classList.toggle('active');
+        content.style.display = isActive ? 'block' : 'none';
+    }
 
-document.querySelectorAll('.collapsible').forEach(function(element) {
-    element.addEventListener('click', function() {
-        // Zwinięcie wszystkich innych sekcji rodzica i ich dzieci
-        document.querySelectorAll('.collapsible').forEach(function(collapsible) {
-            if (collapsible !== this) {
-                collapsible.classList.remove('active');
-                collapsible.nextElementSibling.style.display = 'none';
-                // Zwijanie podsekcji
-                collapsible.nextElementSibling.querySelectorAll('.sub-collapsible').forEach(function(subCollapsible) {
-                    subCollapsible.classList.remove('active');
-                    subCollapsible.nextElementSibling.style.display = 'none';
-                });
+    function collapseAllBut(element, selector) {
+        document.querySelectorAll(selector).forEach(function(item) {
+            if (item !== element) {
+                item.classList.remove('active');
+                item.nextElementSibling.style.display = 'none';
             }
-        }.bind(this));
+        });
+    }
 
-        // Przełączanie aktywnej sekcji
-        const content = this.nextElementSibling;
-        const isActive = content.style.display === 'block';
-        this.classList.toggle('active', !isActive);
-        content.style.display = isActive ? 'none' : 'block';
+    function collapseSubSections(section) {
+        const subSections = section.querySelectorAll('.sub-collapsible');
+        subSections.forEach(function(subSection) {
+            subSection.classList.remove('active');
+            subSection.nextElementSibling.style.display = 'none';
+        });
+    }
+
+    function initCollapsible(selector, parentSelector) {
+        document.querySelectorAll(selector).forEach(function(element) {
+            element.addEventListener('click', function(event) {
+                event.stopPropagation();
+
+                collapseAllBut(element, parentSelector);
+                toggleSection(element);
+
+                // Zamknij wszystkie podsekcje, gdy klikniesz w inny collapsible
+                if (selector === '.collapsible') {
+                    collapseSubSections(element.nextElementSibling);
+                }
+            });
+        });
+    }
+
+    // Inicjalizuj dla sekcji głównych i podsekcji
+    initCollapsible('.collapsible', '.collapsible');
+    initCollapsible('.sub-collapsible', '.content .sub-collapsible');
+
+    // Obsługa ikony filtra dla mobile (<=1024px)
+    document.querySelector('.filter-icon').addEventListener('click', function() {
+        const filterMenu = document.querySelector('.filter-menu');
+        const isMenuVisible = filterMenu.style.display === 'block';
+        filterMenu.style.display = isMenuVisible ? 'none' : 'block';
     });
-});
 
-document.querySelectorAll('.sub-collapsible').forEach(function(element) {
-    element.addEventListener('click', function(event) {
-        // Zapobiega rozprzestrzenianiu się kliknięcia na rodzica
-        event.stopPropagation();
+    // Ukryj menu filtra i ustaw style dla desktopu, pokazuj dla mobile
+    function handleResize() {
+        const filterMenuContainer = document.querySelector('.filter-menu-container');
+        if (window.innerWidth > 1024) {
+            filterMenuContainer.style.display = 'none'; // Ukryj menu dla desktopu
+        } else {
+            filterMenuContainer.style.display = 'block'; // Pokaż menu dla mobile
+        }
+    }
 
-        // Zwijanie wszystkich innych sub-sekcji w bieżącej sekcji rodzica
-        const parentContent = this.closest('.content');
-        parentContent.querySelectorAll('.sub-collapsible').forEach(function(subCollapsible) {
-            if (subCollapsible !== this) {
-                subCollapsible.classList.remove('active');
-                subCollapsible.nextElementSibling.style.display = 'none';
-            }
-        }.bind(this));
-
-        // Przełączanie aktywnej sub-sekcji
-        const subContent = this.nextElementSibling;
-        const isActive = subContent.style.display === 'block';
-        this.classList.toggle('active', !isActive);
-        subContent.style.display = isActive ? 'none' : 'block';
-    });
+    window.addEventListener('resize', handleResize);
+    handleResize(); // Uruchom przy starcie, aby ustawić odpowiedni stan
 });
 
 /* Osbługa Felg -> produkty */
@@ -487,41 +506,3 @@ document.addEventListener("DOMContentLoaded", function() {
     renderPagination();
 });
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Funkcja rozwijania i zwijania filtrów
-    const collapsibles = document.querySelectorAll('.collapsible');
-    collapsibles.forEach(collapsible => {
-        collapsible.addEventListener('click', function() {
-            this.classList.toggle('active');
-            const content = this.nextElementSibling;
-            if (content.style.display === 'block') {
-                content.style.display = 'none';
-            } else {
-                content.style.display = 'block';
-            }
-        });
-    });
-
-    const subCollapsibles = document.querySelectorAll('.sub-collapsible');
-    subCollapsibles.forEach(subCollapsible => {
-        subCollapsible.addEventListener('click', function() {
-            this.classList.toggle('active');
-            const subContent = this.nextElementSibling;
-            if (subContent.style.display === 'block') {
-                subContent.style.display = 'none';
-            } else {
-                subContent.style.display = 'block';
-            }
-        });
-    });
-
-    // Pokazywanie menu filtra po kliknięciu ikony filtra
-    document.querySelector('.filter-icon').addEventListener('click', function() {
-        const filterMenu = document.querySelector('.filter-menu');
-        if (filterMenu.style.display === 'block') {
-            filterMenu.style.display = 'none';
-        } else {
-            filterMenu.style.display = 'block';
-        }
-    });
-});

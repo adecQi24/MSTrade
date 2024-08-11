@@ -913,11 +913,12 @@ main.blurred {
 
 .pagination button.disabled {
     background-color: #ccc;
-    cursor: not-allowed;
+    cursor: pointer;    
 }
 
 /* Filtr Ikona */
 .filter-menu-container {
+    display: none;
     position: relative;
     width: 100%;
     height: 100%;
@@ -1041,6 +1042,20 @@ main.blurred {
     
     .wheels-search {
         display: none;
+    }
+
+    .filter-menu-container{
+        display: block;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    .wheels-content-item{
+        width: 75%;
+    }
+
+    .wheels{
+        justify-content: center;
     }
 }
 
