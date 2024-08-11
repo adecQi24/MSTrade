@@ -374,7 +374,7 @@ main.blurred {
 
 #company-description a:hover{
     background-color: white;
-    color: #2EDA2B;
+    color: #000;
 }
 
 #gallery{
@@ -402,7 +402,7 @@ main.blurred {
 
 #gallery a:hover{
     background-color: white;
-    color: #2EDA2B;
+    color: #000;
 }
 
 #et-calculator{
